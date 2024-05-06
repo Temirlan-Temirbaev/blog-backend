@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package post;
+
+service PostService {
+    rpc GetPosts(WithPage) returns (GetPostsResponse) {}
+    rpc GetPostById(GetPostByIdRequest) returns (GetPostResponse) {}
+    rpc GetPostsByAuthorId(GetPostByIdRequest) returns (GetPostsResponse) {}
+    rpc Create(Post) returns (Success) {}
+    rpc Update(Post) returns (Success) {}
+    rpc Delete(DeleteRequest) returns (Success) {}
+}
+
+message Empty {}
+
+message WithPage {
+    int64 page = 1;
+}
+
+message Post {
+    int64 authorId = 1;
+    int64 postId = 2;
+    string title = 3;
+    string description = 4;
+    string createdAt = 5;
+    optional string updatedAt = 6;
+}
+
+message GetPostsResponse {
+    repeated Post posts = 1;
+}
+
+message GetPostResponse {
+    Post post = 1;
+}
+
+message GetPostByIdRequest {
+    int64 id = 1;
+}
+
+message Success {
+    bool success = 1;
+}
+message DeleteRequest {
+    int64 authorId = 1;
+    int64 postId = 2;
+}
