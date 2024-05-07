@@ -6,7 +6,8 @@ export interface PostService {
   Delete: (body: DeleteRequest) => Promise<SuccessResponse>;
   Update: (body: UpdateRequest) => Promise<SuccessResponse>;
   GetPosts: (body: GetPostsRequest) => Promise<Post[]>;
-  GetPostById: (body: GetPostByIdRequest) => Promise<Post[]>;
+  GetPostById: (body: GetPostByIdRequest) => Promise<Post>;
+  GetPostsByAuthorId: (body: GetPostByIdRequest) => Promise<Post[]>;
 }
 
 export interface CreateRequest {

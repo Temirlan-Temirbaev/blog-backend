@@ -35,14 +35,19 @@ export class PostService {
       relations: ["author"],
       where: { postId: id },
     });
-    const postsComments: Comment[] | null = await this.commentRepository.find({
-      where: { post: { postId: id } },
-      relations: ["author"],
-    });
+    const postsComments: Comment[] = await this.getPostsComments(post.postId);
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
     return { ...post, comments: postsComments ? postsComments : [] };
+  }
+
+  async getPostByAuthor(id: number) {
+    const posts = await this.postRepository.find({
+      where: { author: { id } },
+      relations: ["author", "comments"],
+    });
+    return { posts };
   }
 
   async createPost(
@@ -83,5 +88,13 @@ export class PostService {
     await this.userRepository.save(user);
     await this.postRepository.delete(post);
     return { success: true };
+  }
+
+  async getPostsComments(id: number): Promise<Comment[]> {
+    const postsComments: Comment[] | null = await this.commentRepository.find({
+      where: { post: { postId: id } },
+      relations: ["author"],
+    });
+    return postsComments;
   }
 }

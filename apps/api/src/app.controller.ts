@@ -110,6 +110,12 @@ export class AppController {
     return this.postService.GetPostById({ id: Number(id) });
   }
 
+  @Get("post/author/:authorId")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  getPostByAuthor(@Param("authorId") id: number) {
+    return this.postService.GetPostsByAuthorId({ id: Number(id) });
+  }
+
   @Post("post")
   @UseInterceptors(GrpcToHttpInterceptor)
   @UseGuards(JwtAuthGuard)
