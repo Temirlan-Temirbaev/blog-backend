@@ -10,7 +10,7 @@ export interface PostService {
 }
 
 export interface CreateRequest {
-  userId: number;
+  author: { id: number };
   title: string;
   description: string;
 }

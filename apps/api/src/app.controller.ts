@@ -26,6 +26,7 @@ import {
 } from "@app/shared/interfaces/userService";
 import { UpdatePasswordDto } from "@app/shared/dto/user/updatePassword.dto";
 import { PostService } from "@app/shared/interfaces/postService";
+import { CreatePostDto } from "@app/shared/dto/post/createPost.dto";
 
 @Controller()
 export class AppController {
@@ -97,12 +98,21 @@ export class AppController {
   // Post
 
   @Get("post/page/:page")
+  @UseInterceptors(GrpcToHttpInterceptor)
   getPosts(@Param("page") page: number) {
     return this.postService.GetPosts({ page: Number(page) });
   }
 
   @Get("post/id/:id")
+  @UseInterceptors(GrpcToHttpInterceptor)
   getPostById(@Param("id") id: number) {
     return this.postService.GetPostById({ id: Number(id) });
+  }
+
+  @Post("post")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseGuards(JwtAuthGuard)
+  createPost(@Req() req: RequestWithUserId, @Body() body: CreatePostDto) {
+    return this.postService.Create({ ...body, author: { id: req.userId } });
   }
 }

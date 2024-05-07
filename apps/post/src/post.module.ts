@@ -18,7 +18,7 @@ import { PostController } from "./post.controller";
       entities: [User, Post, Comment],
       url: "postgresql://postgres:foofie213@127.0.0.1:5432/blog",
     }),
-    TypeOrmModule.forFeature([Post, Comment]),
+    TypeOrmModule.forFeature([Post, Comment, User]),
   ],
   controllers: [PostController],
   providers: [
