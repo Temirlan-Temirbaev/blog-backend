@@ -23,4 +23,9 @@ export class PostController {
   async createPost(data: CreateRequest & { author: { id: ProtoInt } }) {
     return await this.postService.createPost(data);
   }
+
+  @GrpcMethod("PostService", "Delete")
+  async deletePost(data: { authorId: ProtoInt; postId: ProtoInt }) {
+    return await this.postService.deletePost(data);
+  }
 }

@@ -10,6 +10,7 @@ import {
   Param,
   Put,
   Req,
+  Delete,
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
@@ -114,5 +115,15 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   createPost(@Req() req: RequestWithUserId, @Body() body: CreatePostDto) {
     return this.postService.Create({ ...body, author: { id: req.userId } });
+  }
+
+  @Delete("post/:id")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseGuards(JwtAuthGuard)
+  deletePost(@Req() req: RequestWithUserId, @Param("id") id: number) {
+    return this.postService.Delete({
+      authorId: req.userId,
+      postId: Number(id),
+    });
   }
 }

@@ -16,7 +16,7 @@ export interface CreateRequest {
 }
 
 export interface DeleteRequest {
-  userId: number;
+  authorId: number;
   postId: number;
 }
 
