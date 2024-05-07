@@ -7,7 +7,10 @@ import {
   GrpcNotFoundException,
 } from "nestjs-grpc-exceptions";
 import { SuccessResponse } from "@app/shared/interfaces/successResponse";
-import { CreateRequest } from "@app/shared/interfaces/postService";
+import {
+  CreateRequest,
+  UpdateRequest,
+} from "@app/shared/interfaces/postService";
 import { ProtoInt } from "@app/shared/interfaces/protoInt";
 
 @Injectable()
@@ -96,5 +99,18 @@ export class PostService {
       relations: ["author"],
     });
     return postsComments;
+  }
+
+  async UpdatePost(
+    data: UpdateRequest & { author: { id: ProtoInt } }
+  ): Promise<SuccessResponse> {
+    const post = await this.postRepository.findOneBy({ postId: data.postId });
+    if (!post) {
+      throw new GrpcNotFoundException("Post not found");
+    }
+
+    Object.assign(post, { title: data.title, description: data.description });
+    await this.postRepository.save(post);
+    return { success: true };
   }
 }

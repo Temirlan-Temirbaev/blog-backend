@@ -22,9 +22,10 @@ export interface DeleteRequest {
 }
 
 export interface UpdateRequest {
-  userId: number;
+  author: { id: number };
   title: string;
   description: string;
+  postId: number;
 }
 
 export interface GetPostsRequest {
