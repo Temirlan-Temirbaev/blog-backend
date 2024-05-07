@@ -104,7 +104,10 @@ export class PostService {
   async UpdatePost(
     data: UpdateRequest & { author: { id: ProtoInt } }
   ): Promise<SuccessResponse> {
-    const post = await this.postRepository.findOneBy({ postId: data.postId });
+    const post = await this.postRepository.findOneBy({
+      postId: data.postId,
+      author: { id: data.author.id.low },
+    });
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }

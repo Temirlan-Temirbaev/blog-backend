@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package comment;
+
+service CommentService {
+  rpc CreateComment(CreateCommentRequest) returns (Comment) {}
+  rpc UpdateComment(UpdateCommentRequest) returns (Success) {}
+  rpc DeleteComment(DeleteCommentRequest) returns (Success) {}
+}
+
+message CreateCommentRequest {
+  Author author = 1;
+  int64 postId = 2;
+  string content = 3;
+}
+
+message UpdateCommentRequest {
+  Author author = 1;
+  int64 postId = 2;
+  string content = 3;
+  int64 commentId = 4;
+}
+
+message DeleteCommentRequest {
+  Author author = 1;
+  int64 commentId = 2;
+}
+
+message Author {
+  int64 id = 1;
+  string nickname = 2;
+}
+
+message Comment {
+  int64 commentId = 1;
+  string content = 2;
+  string createdAt = 3;
+  Author author = 4;
+}
+
+message Success {
+  bool success = 1;
+}
