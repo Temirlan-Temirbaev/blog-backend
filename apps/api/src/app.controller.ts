@@ -100,4 +100,9 @@ export class AppController {
   getPosts(@Param("page") page: number) {
     return this.postService.GetPosts({ page: Number(page) });
   }
+
+  @Get("post/id/:id")
+  getPostById(@Param("id") id: number) {
+    return this.postService.GetPostById({ id: Number(id) });
+  }
 }
