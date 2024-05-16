@@ -15,10 +15,9 @@ export interface CreateCommentRequest {
 
 export type UpdateCommentRequest = {
   commentId: number;
-} & CreateCommentRequest;
+} & Omit<CreateCommentRequest, "postId">;
 
 export interface DeleteCommentRequest {
-  postId: number;
   author: { id: number };
   commentId: number;
 }

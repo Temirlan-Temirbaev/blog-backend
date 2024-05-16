@@ -33,6 +33,15 @@ import { JwtModule } from "@nestjs/jwt";
           url: "localhost:7001",
         },
       },
+      {
+        name: "COMMENT_SERVICE",
+        transport: Transport.GRPC,
+        options: {
+          package: "comment",
+          protoPath: join(__dirname, "../../../proto/comment.proto"),
+          url: "localhost:8001",
+        },
+      },
     ]),
     JwtModule.register({
       secret: "SECRET_KEY",

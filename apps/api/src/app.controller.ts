@@ -29,22 +29,28 @@ import { UpdatePasswordDto } from "@app/shared/dto/user/updatePassword.dto";
 import { PostService } from "@app/shared/interfaces/postService";
 import { CreatePostDto } from "@app/shared/dto/post/createPost.dto";
 import { UpdatePostDto } from "@app/shared/dto/post/updatePost.dto";
+import { CommentService } from "@app/shared/interfaces/commentService";
+import { CreateCommentDto } from "@app/shared/dto/comment/createComment.dto";
+import { UpdateCommentDto } from "@app/shared/dto/comment/updateComment.dto";
 
 @Controller()
 export class AppController {
   private authService: AuthService;
   private userService: UserService;
   private postService: PostService;
+  private commentService: CommentService;
   constructor(
     @Inject("AUTH_SERVICE") private client: ClientGrpc,
     @Inject("USER_SERVICE") private userClient: ClientGrpc,
-    @Inject("POST_SERVICE") private postClient: ClientGrpc
+    @Inject("POST_SERVICE") private postClient: ClientGrpc,
+    @Inject("COMMENT_SERVICE") private commentClient: ClientGrpc
   ) {}
 
   onModuleInit() {
     this.authService = this.client.getService<AuthService>("AuthService");
     this.userService = this.userClient.getService<UserService>("UserService");
     this.postService = this.postClient.getService<PostService>("PostService");
+    this.commentService = this.commentClient.getService<CommentService>("CommentService")
   }
 
   //Auth
@@ -142,10 +148,32 @@ export class AppController {
   @Delete("post/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
   @UseGuards(JwtAuthGuard)
-  deletePost(@Req() req: RequestWithUserId, @Param("id") id: number) {
+  deletePost(@Req() req:  RequestWithUserId, @Param("id") id: number) {
     return this.postService.Delete({
       authorId: req.userId,
       postId: Number(id),
     });
+  }
+
+  // Comment
+  @Post("comment")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseGuards(JwtAuthGuard)
+  createComment(@Req() req : RequestWithUserId, @Body() body: CreateCommentDto){
+    return this.commentService.CreateComment({author : {id: req.userId}, ...body})
+  }
+
+  @Put("comment/:id")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseGuards(JwtAuthGuard)
+  updateComment(@Req() req : RequestWithUserId, @Body() body : UpdateCommentDto, @Param("id") id : string){
+    return this.commentService.UpdateComment({author : {id : req.userId}, ...body, commentId : Number(id)})
+  }
+  
+  @Delete("comment/:id")
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(GrpcToHttpInterceptor)
+  deleteComment(@Req() req : RequestWithUserId, @Param("id") id : string){
+    return this.commentService.DeleteComment({author : {id : req.userId}, commentId : Number(id)})
   }
 }

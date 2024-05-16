@@ -21,7 +21,6 @@ export class CommentController {
   @GrpcMethod("CommentService", "DeleteComment")
   async deleteComment(
     data: DeleteCommentRequest & {
-      postId: ProtoInt;
       author: { id: ProtoInt };
       commentId: ProtoInt;
     }
@@ -32,7 +31,6 @@ export class CommentController {
   async updateComment(
     data: UpdateCommentRequest & {
       author: { id: ProtoInt };
-      postId: ProtoInt;
       commentId: ProtoInt;
     }
   ) {

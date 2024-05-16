@@ -62,6 +62,17 @@
         "assets": ["**/*.proto"],
         "watchAssets": true
       }
+    },
+    "comment": {
+      "type": "application",
+      "root": "apps/comment",
+      "entryFile": "main",
+      "sourceRoot": "apps/comment/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/comment/tsconfig.app.json",
+        "assets": ["**/*.proto"],
+        "watchAssets": true
+      }
     }
   }
 }
