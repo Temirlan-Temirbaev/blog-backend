@@ -50,7 +50,8 @@ export class AppController {
     this.authService = this.client.getService<AuthService>("AuthService");
     this.userService = this.userClient.getService<UserService>("UserService");
     this.postService = this.postClient.getService<PostService>("PostService");
-    this.commentService = this.commentClient.getService<CommentService>("CommentService")
+    this.commentService =
+      this.commentClient.getService<CommentService>("CommentService");
   }
 
   //Auth
@@ -148,7 +149,7 @@ export class AppController {
   @Delete("post/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
   @UseGuards(JwtAuthGuard)
-  deletePost(@Req() req:  RequestWithUserId, @Param("id") id: number) {
+  deletePost(@Req() req: RequestWithUserId, @Param("id") id: number) {
     return this.postService.Delete({
       authorId: req.userId,
       postId: Number(id),
@@ -159,21 +160,35 @@ export class AppController {
   @Post("comment")
   @UseInterceptors(GrpcToHttpInterceptor)
   @UseGuards(JwtAuthGuard)
-  createComment(@Req() req : RequestWithUserId, @Body() body: CreateCommentDto){
-    return this.commentService.CreateComment({author : {id: req.userId}, ...body})
+  createComment(@Req() req: RequestWithUserId, @Body() body: CreateCommentDto) {
+    return this.commentService.CreateComment({
+      author: { id: req.userId },
+      ...body,
+    });
   }
 
   @Put("comment/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
   @UseGuards(JwtAuthGuard)
-  updateComment(@Req() req : RequestWithUserId, @Body() body : UpdateCommentDto, @Param("id") id : string){
-    return this.commentService.UpdateComment({author : {id : req.userId}, ...body, commentId : Number(id)})
+  updateComment(
+    @Req() req: RequestWithUserId,
+    @Body() body: UpdateCommentDto,
+    @Param("id") id: string
+  ) {
+    return this.commentService.UpdateComment({
+      author: { id: req.userId },
+      ...body,
+      commentId: Number(id),
+    });
   }
-  
+
   @Delete("comment/:id")
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(GrpcToHttpInterceptor)
-  deleteComment(@Req() req : RequestWithUserId, @Param("id") id : string){
-    return this.commentService.DeleteComment({author : {id : req.userId}, commentId : Number(id)})
+  deleteComment(@Req() req: RequestWithUserId, @Param("id") id: string) {
+    return this.commentService.DeleteComment({
+      author: { id: req.userId },
+      commentId: Number(id),
+    });
   }
 }

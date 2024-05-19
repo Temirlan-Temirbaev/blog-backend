@@ -9,7 +9,6 @@ import { GrpcServerExceptionFilter } from "nestjs-grpc-exceptions";
 import { JwtModule } from "@nestjs/jwt";
 import { Post } from "@app/shared/entities/post";
 import { Comment } from "@app/shared/entities/comment";
-
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env" }),
@@ -17,7 +16,7 @@ import { Comment } from "@app/shared/entities/comment";
       type: "postgres",
       synchronize: true,
       entities: [User, Post, Comment],
-      url: "postgresql://postgres:foofie213@127.0.0.1:5432/blog",
+      url: process.env.POSTGRES_URL,
     }),
     TypeOrmModule.forFeature([User]),
     JwtModule.register({

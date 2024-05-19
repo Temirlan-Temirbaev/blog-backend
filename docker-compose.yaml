@@ -1,67 +1,67 @@
 version: '3'
 services:
-  # postgres:
-  #   image: postgres
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - '5432:5432'
-  #   volumes:
-  #     - .db/data:/var/lib/postgresql/data
   auth:
     build:
       context: ./
       dockerfile: ./apps/auth/Dockerfile
     ports:
-      - '3000:4000'
+      - '1000:1001'
     env_file:
       - .env
     volumes:
       - .:/blog/src/app
       - /blog/src/app/node_modules
-    command: npm run dev auth   
+    depends_on:
+      - postgres
+    command: npm run dev auth
   user:
     build:
       context: ./
       dockerfile: ./apps/user/Dockerfile
     ports:
-      - '2000:3000'
+      - '2000:2001'
     env_file:
       - .env
     volumes:
       - .:/blog/src/app
       - /blog/src/app/node_modules
-    command: npm run dev user 
+    depends_on:
+      - postgres
+    command: npm run dev user
   post:
     build:
       context: ./
       dockerfile: ./apps/post/Dockerfile
     ports:
-      - '6000:7000'
+      - '3000:3001'
     env_file:
       - .env
     volumes:
       - .:/blog/src/app
       - /blog/src/app/node_modules
+    depends_on:
+      - postgres
     command: npm run dev post
   comment:
     build:
       context: ./
       dockerfile: ./apps/comment/Dockerfile
     ports:
-      - '7000:8000'
+      - '8000:8001'
     env_file:
       - .env
     volumes:
       - .:/blog/src/app
       - /blog/src/app/node_modules
+    depends_on:
+      - postgres
     command: npm run dev comment
   api:
     build:
       context: ./
       dockerfile: ./apps/api/Dockerfile
     ports:
-      - '4000:5000'
+      - '6000:6001'
     env_file:
       - .env
     depends_on:
@@ -73,3 +73,14 @@ services:
       - .:/blog/src/app
       - /blog/src/app/node_modules
     command: npm run dev api
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: "blog"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "foofie213"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - '5436:5432'
+    volumes:
+      - .blogdb-data:/var/lib/postgresql/data

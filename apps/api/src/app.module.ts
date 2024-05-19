@@ -12,7 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
         options: {
           package: "auth",
           protoPath: join(__dirname, "../../../proto/auth.proto"),
-          url: "localhost:5001",
+          url: "auth:1002",
         },
       },
       {
@@ -21,7 +21,7 @@ import { JwtModule } from "@nestjs/jwt";
         options: {
           package: "user",
           protoPath: join(__dirname, "../../../proto/user.proto"),
-          url: "localhost:6001",
+          url: "user:2001",
         },
       },
       {
@@ -30,7 +30,7 @@ import { JwtModule } from "@nestjs/jwt";
         options: {
           package: "post",
           protoPath: join(__dirname, "../../../proto/post.proto"),
-          url: "localhost:7001",
+          url: "post:9001",
         },
       },
       {
@@ -39,7 +39,7 @@ import { JwtModule } from "@nestjs/jwt";
         options: {
           package: "comment",
           protoPath: join(__dirname, "../../../proto/comment.proto"),
-          url: "localhost:8001",
+          url: "comment:3001",
         },
       },
     ]),

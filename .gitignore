@@ -1,5 +1,7 @@
 # compiled output
 /dist
+/.db
+/.blogdb-data
 /node_modules
 # Logs
 logs

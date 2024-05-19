@@ -12,7 +12,7 @@ import { User, Post, Comment } from "@app/shared";
       type: "postgres",
       synchronize: true,
       entities: [User, Post, Comment],
-      url: "postgresql://postgres:foofie213@127.0.0.1:5432/blog",
+      url: process.env.POSTGRES_URL,
     }),
     TypeOrmModule.forFeature([Post, Comment, User]),
   ],
