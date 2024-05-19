@@ -1,4 +1,3 @@
-version: '3'
 services:
   auth:
     build:
@@ -9,8 +8,13 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/blog/src/app
-      - /blog/src/app/node_modules
+      - ./apps/auth:/usr/src/authService/apps/auth
+      - ./nest-cli.json:/usr/src/authService/nest-cli.json
+      - ./tsconfig.json:/usr/src/authService/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/authService/tsconfig.build.json
+      - ./package.json:/usr/src/authService/package.json
+      - ./package-lock.json:/usr/src/authService/package-lock.json
+      # - node_modules:/usr/src/authService/node_modules
     depends_on:
       - postgres
     command: npm run dev auth
@@ -23,8 +27,13 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/blog/src/app
-      - /blog/src/app/node_modules
+      - ./apps/user:/usr/src/userService/apps/user
+      - ./nest-cli.json:/usr/src/userService/nest-cli.json
+      - ./tsconfig.json:/usr/src/userService/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/userService/tsconfig.build.json
+      - ./package.json:/usr/src/userService/package.json
+      - ./package-lock.json:/usr/src/userService/package-lock.json
+      # - node_modules:/usr/src/userService/node_modules
     depends_on:
       - postgres
     command: npm run dev user
@@ -37,8 +46,13 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/blog/src/app
-      - /blog/src/app/node_modules
+      - ./apps/post:/usr/src/postService/apps/post
+      - ./nest-cli.json:/usr/src/postService/nest-cli.json
+      - ./tsconfig.json:/usr/src/postService/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/postService/tsconfig.build.json
+      - ./package.json:/usr/src/postService/package.json
+      - ./package-lock.json:/usr/src/postService/package-lock.json
+      # - node_modules:/usr/src/postService/node_modules
     depends_on:
       - postgres
     command: npm run dev post
@@ -51,8 +65,13 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/blog/src/app
-      - /blog/src/app/node_modules
+      - ./apps/comment:/usr/src/commentService/apps/comment
+      - ./nest-cli.json:/usr/src/commentService/nest-cli.json
+      - ./tsconfig.json:/usr/src/commentService/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/commentService/tsconfig.build.json
+      - ./package.json:/usr/src/commentService/package.json
+      - ./package-lock.json:/usr/src/commentService/package-lock.json
+      # - node_modules:/usr/src/commentService/node_modules
     depends_on:
       - postgres
     command: npm run dev comment
@@ -70,8 +89,13 @@ services:
       - comment
       - user
     volumes:
-      - .:/blog/src/app
-      - /blog/src/app/node_modules
+      - ./apps/api:/usr/src/apiGateway/apps/api
+      - ./nest-cli.json:/usr/src/apiGateway/nest-cli.json
+      - ./tsconfig.json:/usr/src/apiGateway/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/apiGateway/tsconfig.build.json
+      - ./package.json:/usr/src/apiGateway/package.json
+      - ./package-lock.json:/usr/src/apiGateway/package-lock.json
+      # - node_modules:/usr/src/apiGateway/node_modules
     command: npm run dev api
   postgres:
     image: postgres
@@ -84,3 +108,6 @@ services:
       - '5436:5432'
     volumes:
       - .blogdb-data:/var/lib/postgresql/data
+# volumes:
+  # node_modules: 
+    # driver: local

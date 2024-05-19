@@ -1,9 +1,15 @@
 FROM node
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/postService
 
-COPY package*.json .
+COPY ./apps/post .apps/post
+COPY ./nest-cli.json .
+COPY ./tsconfig.* .
+COPY ./package*.json .
+COPY .eslintrc.* .
+COPY ./libs ./libs
+
 
 RUN npm install
 
-COPY . .
+# COPY . .

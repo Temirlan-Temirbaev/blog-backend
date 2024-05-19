@@ -1,9 +1,14 @@
 FROM node
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/userService
 
-COPY package*.json .
+COPY ./apps/user .apps/user
+COPY ./nest-cli.json .
+COPY ./tsconfig.* .
+COPY ./package*.json .
+COPY .eslintrc.* .
+COPY ./libs ./libs
 
 RUN npm install
 
-COPY . .
+# COPY . .
