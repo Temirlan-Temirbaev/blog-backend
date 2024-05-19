@@ -10,11 +10,11 @@ async function bootstrap() {
     options: {
       package: "post",
       protoPath: join(__dirname, "../../../proto/post.proto"),
-      url: "localhost:7001",
+      url: "localhost:6001",
     },
   });
   await app.startAllMicroservices();
-  await app.listen(7000);
+  await app.listen(6000);
 }
 
 bootstrap();
