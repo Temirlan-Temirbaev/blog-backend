@@ -1,12 +1,12 @@
 import { Controller } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { GrpcMethod } from "@nestjs/microservices";
-import { User } from "@app/shared";
 import {
+  User,
+  ProtoInt,
   UpdatePasswordRequest,
   UpdateUserRequest,
-} from "@app/shared/interfaces/userService";
-import { ProtoInt } from "@app/shared/interfaces/protoInt";
+} from "@app/shared";
 
 @Controller()
 export class UserController {

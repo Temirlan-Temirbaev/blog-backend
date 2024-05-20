@@ -20,18 +20,16 @@ import {
   RegisterDto,
   JwtAuthGuard,
   RequestWithUserId,
-} from "@app/shared";
-import {
   UpdateUserRequest,
   UserService,
-} from "@app/shared/interfaces/userService";
-import { UpdatePasswordDto } from "@app/shared/dto/user/updatePassword.dto";
-import { PostService } from "@app/shared/interfaces/postService";
-import { CreatePostDto } from "@app/shared/dto/post/createPost.dto";
-import { UpdatePostDto } from "@app/shared/dto/post/updatePost.dto";
-import { CommentService } from "@app/shared/interfaces/commentService";
-import { CreateCommentDto } from "@app/shared/dto/comment/createComment.dto";
-import { UpdateCommentDto } from "@app/shared/dto/comment/updateComment.dto";
+  UpdatePasswordDto,
+  PostService,
+  CreatePostDto,
+  UpdatePostDto,
+  CommentService,
+  CreateCommentDto,
+  UpdateCommentDto,
+} from "@app/shared";
 
 @Controller()
 export class AppController {

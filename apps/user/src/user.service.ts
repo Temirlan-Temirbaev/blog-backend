@@ -1,8 +1,4 @@
-import { User } from "@app/shared";
-import {
-  UpdatePasswordRequest,
-  UpdateUserRequest,
-} from "@app/shared/interfaces/userService";
+import { UpdatePasswordRequest, UpdateUserRequest, User } from "@app/shared";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {

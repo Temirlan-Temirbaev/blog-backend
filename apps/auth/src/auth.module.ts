@@ -3,12 +3,10 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "@app/shared";
+import { User, Comment, Post } from "@app/shared";
 import { APP_FILTER } from "@nestjs/core";
 import { GrpcServerExceptionFilter } from "nestjs-grpc-exceptions";
 import { JwtModule } from "@nestjs/jwt";
-import { Post } from "@app/shared/entities/post";
-import { Comment } from "@app/shared/entities/comment";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env" }),

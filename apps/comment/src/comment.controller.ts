@@ -5,8 +5,8 @@ import {
   CreateCommentRequest,
   DeleteCommentRequest,
   UpdateCommentRequest,
-} from "@app/shared/interfaces/commentService";
-import { ProtoInt } from "@app/shared/interfaces/protoInt";
+  ProtoInt,
+} from "@app/shared";
 
 @Controller()
 export class CommentController {
