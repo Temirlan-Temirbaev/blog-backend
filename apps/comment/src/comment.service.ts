@@ -8,7 +8,10 @@ import { ProtoInt } from "@app/shared/interfaces/protoInt";
 import { SuccessResponse } from "@app/shared/interfaces/successResponse";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { GrpcAbortedException, GrpcNotFoundException } from "nestjs-grpc-exceptions";
+import {
+  GrpcAbortedException,
+  GrpcNotFoundException,
+} from "nestjs-grpc-exceptions";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -52,24 +55,15 @@ export class CommentService {
     }
   ): Promise<SuccessResponse> {
     const comment = await this.commentRepository.findOne({
-      where : {
+      where: {
         commentId: data.commentId.low,
         author: { id: data.author.id.low },
       },
-      relations : ["author", "post"]
+      relations: ["author", "post"],
     });
-    const post = await this.postRepository.findOne({ where : {postId : comment.post.postId}, relations : ["comments"]})
-    const user = await this.userRepository.findOne({ where : {id : comment.author.id}, relations : ["comments"]})
     if (!comment) {
       throw new GrpcNotFoundException("Comment not found");
     }
-    if (!post || !user) {
-      throw new GrpcAbortedException("Couldn't delete the comment");
-    }
-    post.comments = post.comments.filter((c) => c.commentId !== comment.commentId);
-    user.comments = user.comments.filter((c) => c.commentId !== comment.commentId);
-    await this.userRepository.save(user);
-    await this.postRepository.save(post);
     await this.commentRepository.remove(comment);
     return { success: true };
   }

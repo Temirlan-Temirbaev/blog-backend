@@ -64,8 +64,6 @@ export class PostService {
     }
     const post = this.postRepository.create({ ...data, author: user });
     await this.postRepository.save(post);
-    await this.userRepository.save(user);
-
     return { success: true };
   }
 
@@ -77,18 +75,9 @@ export class PostService {
       postId: data.postId.low,
       author: { id: data.authorId.low },
     });
-    const user = await this.userRepository.findOne({
-      where: { id: data.authorId.low },
-      relations: ["posts"],
-    });
-    if (!user) {
-      throw new GrpcNotFoundException("User not found");
-    }
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
-    user.posts = user.posts.filter((p) => p.postId !== post.postId);
-    await this.userRepository.save(user);
     await this.postRepository.delete(post);
     return { success: true };
   }
@@ -113,6 +102,7 @@ export class PostService {
     }
 
     Object.assign(post, { title: data.title, description: data.description });
+    post.updatedAt = new Date();
     await this.postRepository.save(post);
     return { success: true };
   }
