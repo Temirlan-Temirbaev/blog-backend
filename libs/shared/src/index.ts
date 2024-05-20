@@ -24,3 +24,6 @@ export * from "./dto/user/updateUser.dto";
 
 // Guards
 export * from "./guards/auth.guard";
+
+// Modules
+export * from "./modules/postgres.module";

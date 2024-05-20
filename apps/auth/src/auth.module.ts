@@ -3,19 +3,14 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User, Comment, Post } from "@app/shared";
+import { User, PostgresModule } from "@app/shared";
 import { APP_FILTER } from "@nestjs/core";
 import { GrpcServerExceptionFilter } from "nestjs-grpc-exceptions";
 import { JwtModule } from "@nestjs/jwt";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env" }),
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      synchronize: true,
-      entities: [User, Post, Comment],
-      url: process.env.POSTGRES_URL,
-    }),
+    PostgresModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: "SECRET_KEY",
