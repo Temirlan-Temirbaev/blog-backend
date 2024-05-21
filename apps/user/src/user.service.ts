@@ -27,7 +27,10 @@ export class UserService {
   }
 
   async getUserById(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ["posts"],
+    });
     if (!user) {
       throw new GrpcNotFoundException("User not found");
     }
