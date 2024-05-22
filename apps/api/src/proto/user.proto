@@ -16,6 +16,14 @@ message User {
   string nickname = 2;
 }
 
+message Post {
+  optional int64 postId = 1;
+  string title = 2;
+  string description = 3;
+  optional string createdAt = 4;
+  optional string updatedAt = 5;
+}
+
 
 message GetUserByIdRequest {
   int64 id = 1;
@@ -24,8 +32,7 @@ message GetUserByIdRequest {
 message GetUserByIdResponse {
   int64 id = 1;
   string nickname = 2;
-  repeated int64 posts = 3;
-  repeated int64 comments = 4;
+  repeated Post posts = 3;
 }
 
 message GetUsersResponse {

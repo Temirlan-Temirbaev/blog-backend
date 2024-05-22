@@ -15,14 +15,12 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<User[]> {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.query(
+      "SELECT id, nickname FROM public.user"
+    );
     if (!users) {
       throw new GrpcNotFoundException("Users not found");
     }
-    users.forEach((user) => {
-      delete user.login;
-      delete user.password;
-    });
     return users;
   }
 
