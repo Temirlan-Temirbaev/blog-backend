@@ -86,4 +86,12 @@ export class CommentService {
       success: true,
     };
   }
+
+  async getCommentsByPostId(id: ProtoInt): Promise<{ comments: Comment[] }> {
+    const comments = await this.commentRepository.find({
+      where: { post: { postId: id.low } },
+      relations: ["author"],
+    });
+    return { comments };
+  }
 }

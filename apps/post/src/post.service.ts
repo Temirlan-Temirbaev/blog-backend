@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import {
@@ -13,15 +13,27 @@ import {
   Comment,
   Post,
   User,
+  UserService,
+  CommentService,
 } from "@app/shared";
+import { ClientGrpc } from "@nestjs/microservices";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class PostService {
+  private userService: UserService;
+  private commentService: CommentService;
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
-    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-    @InjectRepository(User) private userRepository: Repository<User>
+    @Inject("USER_SERVICE") private userClient: ClientGrpc,
+    @Inject("COMMENT_SERVICE") private commentClient: ClientGrpc
   ) {}
+
+  onModuleInit() {
+    this.userService = this.userClient.getService<UserService>("UserService");
+    this.commentService =
+      this.commentClient.getService<CommentService>("CommentService");
+  }
 
   async getPosts(page: number): Promise<{ posts: Post[] }> {
     if (page <= 0) {
@@ -40,31 +52,45 @@ export class PostService {
       relations: ["author"],
       where: { postId: id },
     });
-    const postsComments: Comment[] = await this.getPostsComments(post.postId);
+    const commentsObservable = this.commentService.GetCommentsByPostId({
+      postId: post.postId,
+    });
+    const { comments }: { comments: Comment[] } = await lastValueFrom(
+      // @ts-ignore
+      commentsObservable
+    );
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
-    return { ...post, comments: postsComments ? postsComments : [] };
+    return {
+      ...post,
+      comments,
+    };
   }
 
   async getPostByAuthor(id: number) {
     const posts = await this.postRepository.find({
       where: { author: { id } },
-      relations: ["author", "comments"],
     });
+
     return { posts };
   }
 
   async createPost(
     data: CreateRequest & { author: { id: ProtoInt } }
   ): Promise<SuccessResponse> {
-    const user = await this.userRepository.findOne({
-      where: { id: data.author.id.low },
+    const userObservable = this.userService.GetUserById({
+      id: data.author.id.low,
     });
+    // @ts-ignore
+    const user: User = await lastValueFrom(userObservable);
     if (!user) {
       throw new GrpcNotFoundException("User not found");
     }
-    const post = this.postRepository.create({ ...data, author: user });
+    const post = this.postRepository.create({
+      ...data,
+      author: { ...user, id: data.author.id.low },
+    });
     await this.postRepository.save(post);
     return { success: true };
   }
@@ -82,14 +108,6 @@ export class PostService {
     }
     await this.postRepository.delete(post);
     return { success: true };
-  }
-
-  async getPostsComments(id: number): Promise<Comment[]> {
-    const postsComments: Comment[] | null = await this.commentRepository.find({
-      where: { post: { postId: id } },
-      relations: ["author"],
-    });
-    return postsComments;
   }
 
   async UpdatePost(

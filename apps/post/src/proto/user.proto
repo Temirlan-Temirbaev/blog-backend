@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {}
+  rpc GetUsers(Empty) returns (GetUsersResponse) {}
+  rpc UpdateUser(UpdateUserRequest) returns (GetUserByIdResponse) {}
+  rpc UpdatePassword(UpdatePasswordRequest) returns (GetUserByIdResponse) {}
+}
+
+message Empty {}
+
+message User {
+  int64 id = 1;
+  string nickname = 2;
+}
+
+message Post {
+  optional int64 postId = 1;
+  string title = 2;
+  string description = 3;
+  optional string createdAt = 4;
+  optional string updatedAt = 5;
+}
+
+
+message GetUserByIdRequest {
+  int64 id = 1;
+}
+
+message GetUserByIdResponse {
+  int64 id = 1;
+  string nickname = 2;
+  repeated Post posts = 3;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+}
+
+message UpdateUserRequest {
+  int64 id = 1;
+  string nickname = 2;
+}
+
+message UpdatePasswordRequest {
+  int64 id = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
+  string confirmPassword = 4;
+}

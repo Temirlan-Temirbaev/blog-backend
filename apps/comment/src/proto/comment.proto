@@ -3,9 +3,18 @@ syntax = "proto3";
 package comment;
 
 service CommentService {
+  rpc GetCommentsByPostId(GetCommentsByPostIdRequest) returns (GetCommentsByPostIdResponse) {}
   rpc CreateComment(CreateCommentRequest) returns (Comment) {}
   rpc UpdateComment(UpdateCommentRequest) returns (Success) {}
   rpc DeleteComment(DeleteCommentRequest) returns (Success) {}
+}
+
+message GetCommentsByPostIdRequest {
+  int64 postId = 1;
+}
+
+message GetCommentsByPostIdResponse {
+  repeated Comment comments = 1;
 }
 
 message CreateCommentRequest {

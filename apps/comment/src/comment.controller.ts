@@ -36,4 +36,11 @@ export class CommentController {
   ) {
     return this.commentService.updateComment(data);
   }
+
+  @GrpcMethod("CommentService", "GetCommentsByPostId")
+  async getCommentsByPostId(data: { postId: ProtoInt }) {
+    console.log(data);
+
+    return this.commentService.getCommentsByPostId(data.postId);
+  }
 }
