@@ -5,6 +5,7 @@ export interface UserService {
   GetUsers: (body: {}) => Promise<User[]>;
   UpdateUser: (body: UpdateUserRequest) => Promise<User>;
   UpdatePassword: (body: UpdatePasswordRequest) => Promise<User>;
+  SearchUsers: (body: SearchUsersRequest) => Promise<User[]>;
 }
 
 export interface GetUserByIdRequest {
@@ -21,4 +22,8 @@ export interface UpdatePasswordRequest {
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
+}
+
+export interface SearchUsersRequest {
+  nickname: string;
 }

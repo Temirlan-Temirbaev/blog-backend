@@ -7,6 +7,7 @@ service UserService {
   rpc GetUsers(Empty) returns (GetUsersResponse) {}
   rpc UpdateUser(UpdateUserRequest) returns (GetUserByIdResponse) {}
   rpc UpdatePassword(UpdatePasswordRequest) returns (GetUserByIdResponse) {}
+  rpc SearchUsers(SearchUsersRequest) returns (GetUsersResponse) {}
 }
 
 message Empty {}
@@ -37,6 +38,10 @@ message GetUserByIdResponse {
 
 message GetUsersResponse {
   repeated User users = 1;
+}
+
+message SearchUsersRequest {
+  string nickname = 1;
 }
 
 message UpdateUserRequest {

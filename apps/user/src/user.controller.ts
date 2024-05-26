@@ -6,6 +6,7 @@ import {
   ProtoInt,
   UpdatePasswordRequest,
   UpdateUserRequest,
+  SearchUsersRequest,
 } from "@app/shared";
 
 @Controller()
@@ -36,5 +37,10 @@ export class UserController {
     data: UpdatePasswordRequest & { id: ProtoInt }
   ): Promise<User> {
     return this.appService.updatePassword({ ...data, id: data.id.low });
+  }
+
+  @GrpcMethod("UserService", "SearchUsers")
+  async searchUsers(data: SearchUsersRequest) {
+    return this.appService.searchUser(data);
   }
 }

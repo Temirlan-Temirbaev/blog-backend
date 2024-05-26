@@ -1,6 +1,7 @@
 import {
   JwtAuthGuard,
   RequestWithUserId,
+  SearchUsersRequest,
   UpdatePasswordDto,
   UpdateUserDto,
   UserService,
@@ -32,10 +33,16 @@ export class UserController {
     return this.userService.GetUsers({});
   }
 
-  @Get("/:id")
+  @Get("/id/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
   getUserById(@Param("id") id: string) {
     return this.userService.GetUserById({ id: Number(id) });
+  }
+
+  @Get("search")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  searchUsers(@Req() req: { query: SearchUsersRequest }) {
+    return this.userService.SearchUsers(req.query);
   }
 
   @Put("update")

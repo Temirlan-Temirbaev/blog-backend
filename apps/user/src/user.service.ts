@@ -1,11 +1,16 @@
-import { UpdatePasswordRequest, UpdateUserRequest, User } from "@app/shared";
+import {
+  SearchUsersRequest,
+  UpdatePasswordRequest,
+  UpdateUserRequest,
+  User,
+} from "@app/shared";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   GrpcAbortedException,
   GrpcNotFoundException,
 } from "nestjs-grpc-exceptions";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
 
 @Injectable()
@@ -60,5 +65,12 @@ export class UserService {
     user.password = hashedPassword;
     await this.userRepository.save(user);
     return user;
+  }
+
+  async searchUser({ nickname }: SearchUsersRequest) {
+    const users = await this.userRepository.find({
+      where: { nickname: Like(`%${nickname}%`) },
+    });
+    return { users };
   }
 }
