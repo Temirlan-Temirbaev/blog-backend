@@ -63,6 +63,17 @@
         "watchAssets": true
       }
     },
+    "image": {
+      "type": "application",
+      "root": "apps/image",
+      "entryFile": "main",
+      "sourceRoot": "apps/image/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/image/tsconfig.app.json",
+        "assets": ["**/*.proto"],
+        "watchAssets": true
+      }
+    },
     "comment": {
       "type": "application",
       "root": "apps/comment",

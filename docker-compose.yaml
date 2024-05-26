@@ -1,4 +1,22 @@
 services:
+  image:
+    build:
+      context: ./
+      dockerfile: ./apps/image/Dockerfile
+    ports:
+      - '9000:9002'
+    env_file:
+      - .env
+    volumes:
+      - ./apps/image:/usr/src/imageService/apps/image
+      - ./nest-cli.json:/usr/src/imageService/nest-cli.json
+      - ./tsconfig.json:/usr/src/imageService/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/imageService/tsconfig.build.json
+      - ./package.json:/usr/src/imageService/package.json
+      - ./package-lock.json:/usr/src/imageService/package-lock.json
+    depends_on:
+      - postgres
+    command: npm run dev image
   auth:
     build:
       context: ./
@@ -14,7 +32,6 @@ services:
       - ./tsconfig.build.json:/usr/src/authService/tsconfig.build.json
       - ./package.json:/usr/src/authService/package.json
       - ./package-lock.json:/usr/src/authService/package-lock.json
-      # - node_modules:/usr/src/authService/node_modules
     depends_on:
       - postgres
     command: npm run dev auth
@@ -33,7 +50,6 @@ services:
       - ./tsconfig.build.json:/usr/src/userService/tsconfig.build.json
       - ./package.json:/usr/src/userService/package.json
       - ./package-lock.json:/usr/src/userService/package-lock.json
-      # - node_modules:/usr/src/userService/node_modules
     depends_on:
       - postgres
     command: npm run dev user
@@ -52,7 +68,6 @@ services:
       - ./tsconfig.build.json:/usr/src/postService/tsconfig.build.json
       - ./package.json:/usr/src/postService/package.json
       - ./package-lock.json:/usr/src/postService/package-lock.json
-      # - node_modules:/usr/src/postService/node_modules
     depends_on:
       - postgres
     command: npm run dev post
@@ -71,7 +86,6 @@ services:
       - ./tsconfig.build.json:/usr/src/commentService/tsconfig.build.json
       - ./package.json:/usr/src/commentService/package.json
       - ./package-lock.json:/usr/src/commentService/package-lock.json
-      # - node_modules:/usr/src/commentService/node_modules
     depends_on:
       - postgres
     command: npm run dev comment
@@ -88,6 +102,7 @@ services:
       - post
       - comment
       - user
+      - image
     volumes:
       - ./apps/api:/usr/src/apiGateway/apps/api
       - ./nest-cli.json:/usr/src/apiGateway/nest-cli.json
@@ -95,7 +110,6 @@ services:
       - ./tsconfig.build.json:/usr/src/apiGateway/tsconfig.build.json
       - ./package.json:/usr/src/apiGateway/package.json
       - ./package-lock.json:/usr/src/apiGateway/package-lock.json
-      # - node_modules:/usr/src/apiGateway/node_modules
     command: npm run dev api
   postgres:
     image: postgres
@@ -108,6 +122,3 @@ services:
       - '5436:5432'
     volumes:
       - .blogdb-data:/var/lib/postgresql/data
-# volumes:
-  # node_modules: 
-    # driver: local

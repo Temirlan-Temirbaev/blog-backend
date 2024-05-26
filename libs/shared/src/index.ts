@@ -2,12 +2,14 @@
 export * from "./entities/user";
 export * from "./entities/post";
 export * from "./entities/comment";
+export * from "./entities/image";
 
 // Interfaces
 export * from "./interfaces/authService";
 export * from "./interfaces/request";
 export * from "./interfaces/commentService";
 export * from "./interfaces/postService";
+export * from "./interfaces/imageService";
 export * from "./interfaces/userService";
 export * from "./interfaces/protoInt";
 export * from "./interfaces/successResponse";
