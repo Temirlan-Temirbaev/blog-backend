@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Brackets, Like, Repository } from "typeorm";
 import {
   GrpcInvalidArgumentException,
   GrpcNotFoundException,
@@ -15,6 +15,7 @@ import {
   User,
   UserService,
   CommentService,
+  GetPostsByContentRequest,
 } from "@app/shared";
 import { ClientGrpc } from "@nestjs/microservices";
 import { lastValueFrom } from "rxjs";
@@ -71,6 +72,9 @@ export class PostService {
   async getPostByAuthor(id: number) {
     const posts = await this.postRepository.find({
       where: { author: { id } },
+      order: {
+        createdAt: "DESC",
+      },
     });
 
     return { posts };
@@ -125,5 +129,23 @@ export class PostService {
     post.updatedAt = new Date();
     await this.postRepository.save(post);
     return { success: true };
+  }
+
+  async getPostsByContent(data: GetPostsByContentRequest) {
+    const posts = await this.postRepository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.author", "author")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("post.title LIKE :like", {
+            like: `%${data.title}%`,
+          }).orWhere("post.description LIKE :description", {
+            description: `%${data.description}%`,
+          });
+        })
+      )
+      .orderBy("post.createdAt", "DESC")
+      .getMany();
+    return { posts };
   }
 }

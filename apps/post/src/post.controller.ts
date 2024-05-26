@@ -1,7 +1,13 @@
 import { Controller } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { GrpcMethod } from "@nestjs/microservices";
-import { CreateRequest, UpdateRequest, Post, ProtoInt } from "@app/shared";
+import {
+  CreateRequest,
+  UpdateRequest,
+  Post,
+  ProtoInt,
+  GetPostsByContentRequest,
+} from "@app/shared";
 
 @Controller()
 export class PostController {
@@ -35,6 +41,11 @@ export class PostController {
   @GrpcMethod("PostService", "GetPostsByAuthorId")
   async getByAuthor(data: { id: ProtoInt }) {
     return await this.postService.getPostByAuthor(data.id.low);
+  }
+
+  @GrpcMethod("PostService", "GetPostsByContent")
+  async getPostsByAuthor(data: GetPostsByContentRequest) {
+    return await this.postService.getPostsByContent(data);
   }
 
   @GrpcMethod("PostService", "Delete")

@@ -9,6 +9,7 @@ service PostService {
     rpc Create(Post) returns (Success) {}
     rpc Update(Post) returns (Success) {}
     rpc Delete(DeleteRequest) returns (Success) {}
+    rpc GetPostsByContent(GetPostsByContentRequest) returns(GetPostsResponse) {}
 }
 
 message Empty {}
@@ -45,6 +46,11 @@ message GetPostsResponse {
 
 message GetPostByIdRequest {
     int64 id = 1;
+}
+
+message GetPostsByContentRequest {
+    string title = 1;
+    string description = 2;
 }
 
 message Success {

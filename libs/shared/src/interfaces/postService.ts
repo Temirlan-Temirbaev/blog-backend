@@ -8,6 +8,7 @@ export interface PostService {
   GetPosts: (body: GetPostsRequest) => Promise<Post[]>;
   GetPostById: (body: GetPostByIdRequest) => Promise<Post>;
   GetPostsByAuthorId: (body: GetPostByIdRequest) => Promise<Post[]>;
+  GetPostsByContent: (body: GetPostsByContentRequest) => Promise<Post[]>;
 }
 
 export interface CreateRequest {
@@ -34,4 +35,9 @@ export interface GetPostsRequest {
 
 export interface GetPostByIdRequest {
   id: number;
+}
+
+export interface GetPostsByContentRequest {
+  title?: string;
+  description?: string;
 }

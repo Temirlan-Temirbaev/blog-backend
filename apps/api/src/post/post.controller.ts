@@ -1,5 +1,6 @@
 import {
   CreatePostDto,
+  GetPostsByContentRequest,
   JwtAuthGuard,
   PostService,
   RequestWithUserId,
@@ -46,6 +47,12 @@ export class PostController {
   @UseInterceptors(GrpcToHttpInterceptor)
   getPostByAuthor(@Param("authorId") id: number) {
     return this.postService.GetPostsByAuthorId({ id: Number(id) });
+  }
+
+  @Get("content")
+  @UseInterceptors(GrpcToHttpInterceptor)
+  getPostsByContent(@Req() req: { query: GetPostsByContentRequest }) {
+    return this.postService.GetPostsByContent(req.query);
   }
 
   @Post()
