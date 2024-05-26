@@ -1,4 +1,5 @@
 import { User } from "../entities/user";
+import { SuccessResponse } from "./successResponse";
 
 export interface UserService {
   GetUserById: (body: GetUserByIdRequest) => Promise<User>;
@@ -6,6 +7,7 @@ export interface UserService {
   UpdateUser: (body: UpdateUserRequest) => Promise<User>;
   UpdatePassword: (body: UpdatePasswordRequest) => Promise<User>;
   SearchUsers: (body: SearchUsersRequest) => Promise<User[]>;
+  UpdateAvatar: (body: UpdateAvatarRequest) => Promise<SuccessResponse>;
 }
 
 export interface GetUserByIdRequest {
@@ -26,4 +28,10 @@ export interface UpdatePasswordRequest {
 
 export interface SearchUsersRequest {
   nickname: string;
+}
+
+export interface UpdateAvatarRequest {
+  id: number;
+  image: Uint8Array;
+  fileName: string;
 }

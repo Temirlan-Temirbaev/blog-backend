@@ -24,14 +24,14 @@ message SaveImageRequest {
 }
 
 message GetImageRequest {
-  int64 imageId = 1;
+  string fileName = 1;
 }
 
 message UpdateImageRequest {
-  int64 imageId = 1;
+  string fileName = 1;
   bytes image = 2;
 }
 
 message DeleteImageRequest {
-  int64 imageId = 1;
+  string fileName = 1;
 }

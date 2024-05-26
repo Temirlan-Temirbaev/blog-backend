@@ -10,6 +10,7 @@ export interface RegisterRequest {
   login: string;
   password: string;
   nickname: string;
+  image: Uint8Array;
 }
 
 export interface RegisterResponse {

@@ -8,6 +8,7 @@ service UserService {
   rpc UpdateUser(UpdateUserRequest) returns (GetUserByIdResponse) {}
   rpc UpdatePassword(UpdatePasswordRequest) returns (GetUserByIdResponse) {}
   rpc SearchUsers(SearchUsersRequest) returns (GetUsersResponse) {}
+  rpc UpdateAvatar(UpdateAvatarRequest) returns (Success) {}
 }
 
 message Empty {}
@@ -15,6 +16,7 @@ message Empty {}
 message User {
   int64 id = 1;
   string nickname = 2;
+  string avatar = 3;
 }
 
 message Post {
@@ -54,4 +56,14 @@ message UpdatePasswordRequest {
   string oldPassword = 2;
   string newPassword = 3;
   string confirmPassword = 4;
+}
+
+message UpdateAvatarRequest {
+  int64 id = 1;
+  string fileName = 2;
+  bytes image = 3;
+}
+
+message Success {
+  bool success = 1;
 }

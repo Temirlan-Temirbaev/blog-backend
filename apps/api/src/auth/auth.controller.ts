@@ -6,10 +6,12 @@ import {
   Headers,
   Inject,
   Post,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
 
 @Controller("auth")
@@ -21,9 +23,12 @@ export class AuthController {
   }
 
   @Post("register")
-  @UseInterceptors(GrpcToHttpInterceptor)
-  register(@Body() body: RegisterDto) {
-    return this.authService.Register(body);
+  @UseInterceptors(GrpcToHttpInterceptor, FileInterceptor("file"))
+  register(
+    @Body() body: RegisterDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    return this.authService.Register({ ...body, image: file.buffer });
   }
 
   @Post("login")

@@ -13,14 +13,14 @@ export interface ImageBytes {
 }
 
 export interface GetImageRequest {
-  imageId: number;
+  fileName: string;
 }
 
 export interface UpdateImageRequest {
-  imageId: number;
+  fileName: string;
   image: Uint8Array;
 }
 
 export interface DeleteImageRequest {
-  imageId: number;
+  fileName: string;
 }

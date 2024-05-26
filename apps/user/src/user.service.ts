@@ -3,8 +3,11 @@ import {
   UpdatePasswordRequest,
   UpdateUserRequest,
   User,
+  ImageService,
+  UpdateAvatarRequest,
+  Image,
 } from "@app/shared";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   GrpcAbortedException,
@@ -12,16 +15,26 @@ import {
 } from "nestjs-grpc-exceptions";
 import { Like, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
+import { ClientGrpc } from "@nestjs/microservices";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class UserService {
+  private imageService: ImageService;
+
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @Inject("IMAGE_SERVICE") private imageClient: ClientGrpc
   ) {}
+
+  onModuleInit() {
+    this.imageService =
+      this.imageClient.getService<ImageService>("ImageService");
+  }
 
   async getUsers(): Promise<User[]> {
     const users = await this.userRepository.query(
-      "SELECT id, nickname FROM public.user"
+      "SELECT id, nickname, avatar FROM public.user"
     );
     if (!users) {
       throw new GrpcNotFoundException("Users not found");
@@ -72,5 +85,22 @@ export class UserService {
       where: { nickname: Like(`%${nickname}%`) },
     });
     return { users };
+  }
+
+  async updateAvatar(body: UpdateAvatarRequest) {
+    const user = await this.getUserById(body.id);
+    if (!user) return;
+    const imageObservable = this.imageService.UpdateImage({
+      fileName: body.fileName,
+      image: body.image,
+    });
+
+    // @ts-ignore
+    const image: Image = await lastValueFrom(imageObservable);
+    console.log(image);
+
+    user.avatar = image.fileName;
+    await this.userRepository.save(user);
+    return { success: true };
   }
 }

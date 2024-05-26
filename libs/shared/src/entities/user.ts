@@ -18,4 +18,6 @@ export class User {
     onDelete: "CASCADE",
   })
   comments: Comment[];
+  @Column({ default: "" })
+  avatar: string;
 }

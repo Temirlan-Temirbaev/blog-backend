@@ -32,8 +32,8 @@ export class ImageService {
     return await this.imageRepository.save(imageEntity);
   }
 
-  async getImage(imageId: number) {
-    const imageEntity = await this.imageRepository.findOneBy({ imageId });
+  async getImage(fileName: string) {
+    const imageEntity = await this.imageRepository.findOneBy({ fileName });
     if (!imageEntity) {
       throw new GrpcNotFoundException("Image not found");
     }
@@ -43,7 +43,7 @@ export class ImageService {
 
   async updateImage(data: UpdateImageRequest) {
     const imageEntity = await this.imageRepository.findOneBy({
-      imageId: data.imageId,
+      fileName: data.fileName,
     });
     if (!imageEntity) {
       throw new GrpcNotFoundException("Image not found");
@@ -59,9 +59,9 @@ export class ImageService {
     return await this.imageRepository.save(imageEntity);
   }
 
-  async deleteFile(imageId: number) {
-    const { filePath, fileName } = await this.imageRepository.findOneBy({
-      imageId,
+  async deleteFile(fileName: string) {
+    const { filePath } = await this.imageRepository.findOneBy({
+      fileName,
     });
     if (!filePath || !fileName) {
       throw new GrpcNotFoundException("File not found");

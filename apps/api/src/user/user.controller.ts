@@ -14,10 +14,12 @@ import {
   Param,
   Put,
   Req,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
 
 @Controller("user")
@@ -60,5 +62,20 @@ export class UserController {
     @Req() req: RequestWithUserId
   ) {
     return this.userService.UpdatePassword({ ...body, id: req.userId });
+  }
+
+  @Put("avatar/:fileName")
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(GrpcToHttpInterceptor, FileInterceptor("file"))
+  updateAvatar(
+    @Req() req: RequestWithUserId,
+    @UploadedFile() file: Express.Multer.File,
+    @Param("fileName") fileName: string
+  ) {
+    return this.userService.UpdateAvatar({
+      id: req.userId,
+      image: file.buffer,
+      fileName,
+    });
   }
 }

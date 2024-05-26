@@ -1,7 +1,12 @@
 import { Controller } from "@nestjs/common";
 import { ImageService } from "./image.service";
 import { GrpcMethod } from "@nestjs/microservices";
-import { ImageBytes, ProtoInt, UpdateImageRequest } from "@app/shared";
+import {
+  DeleteImageRequest,
+  GetImageRequest,
+  ImageBytes,
+  UpdateImageRequest,
+} from "@app/shared";
 
 @Controller()
 export class ImageController {
@@ -12,20 +17,18 @@ export class ImageController {
   }
 
   @GrpcMethod("ImageService", "GetImage")
-  async getImage(data: { imageId: ProtoInt }) {
-    return await this.imageService.getImage(data.imageId.low);
+  async getImage(data: GetImageRequest) {
+    return await this.imageService.getImage(data.fileName);
   }
 
   @GrpcMethod("ImageService", "UpdateImage")
-  async updateImage(data: UpdateImageRequest & { imageId: ProtoInt }) {
-    return await this.imageService.updateImage({
-      ...data,
-      imageId: data.imageId.low,
-    });
+  async updateImage(data: UpdateImageRequest) {
+    console.log(data);
+    return await this.imageService.updateImage(data);
   }
 
   @GrpcMethod("ImageService", "DeleteImage")
-  async deleteImage(data: { imageId: ProtoInt }) {
-    return await this.imageService.deleteFile(data.imageId.low);
+  async deleteImage(data: DeleteImageRequest) {
+    return await this.imageService.deleteFile(data.fileName);
   }
 }
