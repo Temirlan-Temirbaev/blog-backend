@@ -91,7 +91,7 @@ export class UserService {
     const user = await this.getUserById(body.id);
     if (!user) return;
     const imageObservable = this.imageService.UpdateImage({
-      fileName: body.fileName,
+      fileName: user.avatar,
       image: body.image,
     });
 

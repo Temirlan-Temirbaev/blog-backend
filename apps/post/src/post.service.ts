@@ -16,6 +16,8 @@ import {
   UserService,
   CommentService,
   GetPostsByContentRequest,
+  ImageService,
+  Image,
 } from "@app/shared";
 import { ClientGrpc } from "@nestjs/microservices";
 import { lastValueFrom } from "rxjs";
@@ -24,9 +26,11 @@ import { lastValueFrom } from "rxjs";
 export class PostService {
   private userService: UserService;
   private commentService: CommentService;
+  private imageService: ImageService;
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @Inject("USER_SERVICE") private userClient: ClientGrpc,
+    @Inject("IMAGE_SERVICE") private imageClient: ClientGrpc,
     @Inject("COMMENT_SERVICE") private commentClient: ClientGrpc
   ) {}
 
@@ -34,6 +38,8 @@ export class PostService {
     this.userService = this.userClient.getService<UserService>("UserService");
     this.commentService =
       this.commentClient.getService<CommentService>("CommentService");
+    this.imageService =
+      this.imageClient.getService<ImageService>("ImageService");
   }
 
   async getPosts(page: number): Promise<{ posts: Post[] }> {
@@ -91,9 +97,13 @@ export class PostService {
     if (!user) {
       throw new GrpcNotFoundException("User not found");
     }
+    const imageObservable = this.imageService.SaveImage({ image: data.file });
+    // @ts-ignore
+    const image: Image = await lastValueFrom(imageObservable);
     const post = this.postRepository.create({
       ...data,
       author: { ...user, id: data.author.id.low },
+      image: image.fileName,
     });
     await this.postRepository.save(post);
     return { success: true };
@@ -110,6 +120,13 @@ export class PostService {
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
+    if (post.image.length !== 0) {
+      const successObservable = this.imageService.DeleteImage({
+        fileName: post.image,
+      });
+      //@ts-ignore
+      const success: SuccessResponse = await lastValueFrom(successObservable);
+    }
     await this.postRepository.delete(post);
     return { success: true };
   }
@@ -125,7 +142,22 @@ export class PostService {
       throw new GrpcNotFoundException("Post not found");
     }
 
-    Object.assign(post, { title: data.title, description: data.description });
+    if (data.file) {
+      const imageObservable = this.imageService.UpdateImage({
+        image: data.file,
+        fileName: post.image,
+      });
+      // @ts-ignore
+      const image: Image = await lastValueFrom(imageObservable);
+      Object.assign(post, {
+        title: data.title,
+        description: data.description,
+        image: image.fileName,
+      });
+    } else {
+      Object.assign(post, { title: data.title, description: data.description });
+    }
+
     post.updatedAt = new Date();
     await this.postRepository.save(post);
     return { success: true };

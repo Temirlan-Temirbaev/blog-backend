@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package image;
+
+service ImageService {
+  rpc SaveImage (SaveImageRequest) returns (Image) {}
+  rpc GetImage(GetImageRequest) returns (SaveImageRequest) {}
+  rpc UpdateImage(UpdateImageRequest) returns (Image) {}
+  rpc DeleteImage(DeleteImageRequest) returns (Success) {}
+}
+
+message Success {
+  bool success = 1;
+}
+
+message Image {
+  int64 imageId = 1;
+  string filePath = 2;
+  string fileName = 3;
+}
+
+message SaveImageRequest {
+  bytes image = 1;
+}
+
+message GetImageRequest {
+  string fileName = 1;
+}
+
+message UpdateImageRequest {
+  string fileName = 1;
+  bytes image = 2;
+}
+
+message DeleteImageRequest {
+  string fileName = 1;
+}

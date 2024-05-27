@@ -64,18 +64,16 @@ export class UserController {
     return this.userService.UpdatePassword({ ...body, id: req.userId });
   }
 
-  @Put("avatar/:fileName")
+  @Put("avatar")
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(GrpcToHttpInterceptor, FileInterceptor("file"))
   updateAvatar(
     @Req() req: RequestWithUserId,
-    @UploadedFile() file: Express.Multer.File,
-    @Param("fileName") fileName: string
+    @UploadedFile() file: Express.Multer.File
   ) {
     return this.userService.UpdateAvatar({
       id: req.userId,
       image: file.buffer,
-      fileName,
     });
   }
 }

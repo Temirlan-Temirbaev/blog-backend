@@ -16,10 +16,12 @@ import {
   Post,
   Put,
   Req,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
 
 @Controller("post")
@@ -56,9 +58,20 @@ export class PostController {
   }
 
   @Post()
-  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseInterceptors(GrpcToHttpInterceptor, FileInterceptor("file"))
   @UseGuards(JwtAuthGuard)
-  createPost(@Req() req: RequestWithUserId, @Body() body: CreatePostDto) {
+  createPost(
+    @Req() req: RequestWithUserId,
+    @Body() body: CreatePostDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    if (file) {
+      return this.postService.Create({
+        ...body,
+        author: { id: req.userId },
+        file: file.buffer,
+      });
+    }
     return this.postService.Create({ ...body, author: { id: req.userId } });
   }
 
@@ -68,8 +81,17 @@ export class PostController {
   updatePost(
     @Req() req: RequestWithUserId,
     @Body() body: UpdatePostDto,
-    @Param("id") id: number
+    @Param("id") id: number,
+    @UploadedFile() file: Express.Multer.File
   ) {
+    if (file) {
+      return this.postService.Update({
+        ...body,
+        postId: Number(id),
+        author: { id: req.userId },
+        file: file.buffer,
+      });
+    }
     return this.postService.Update({
       ...body,
       postId: Number(id),

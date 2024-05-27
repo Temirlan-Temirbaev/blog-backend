@@ -24,4 +24,6 @@ export class Post {
   author: User;
   @OneToMany(() => Comment, (comment) => comment.post, { onDelete: "CASCADE" })
   comments: Comment[];
+  @Column({ default: "" })
+  image: string;
 }

@@ -60,8 +60,7 @@ message UpdatePasswordRequest {
 
 message UpdateAvatarRequest {
   int64 id = 1;
-  string fileName = 2;
-  bytes image = 3;
+  bytes image = 2;
 }
 
 message Success {

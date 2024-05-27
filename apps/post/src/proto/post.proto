@@ -26,6 +26,8 @@ message Post {
     optional string createdAt = 5;
     optional string updatedAt = 6;
     repeated Comment comments = 7;
+    optional string image = 8;
+    optional bytes file = 9;
 }
 
 message Author {

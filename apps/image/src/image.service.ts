@@ -52,7 +52,11 @@ export class ImageService {
     if (!existsSync(join(filePath, imageEntity.fileName))) {
       throw new GrpcNotFoundException("Image not found");
     }
-    unlinkSync(join(filePath, imageEntity.fileName));
+    try {
+      unlinkSync(join(filePath, imageEntity.fileName));
+    } catch (e) {
+      console.log("Image is not exist");
+    }
     const newFileName = uuid.v4() + ".jpg";
     writeFileSync(join(filePath, newFileName), data.image);
     imageEntity.fileName = newFileName;

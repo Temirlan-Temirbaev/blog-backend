@@ -33,5 +33,4 @@ export interface SearchUsersRequest {
 export interface UpdateAvatarRequest {
   id: number;
   image: Uint8Array;
-  fileName: string;
 }

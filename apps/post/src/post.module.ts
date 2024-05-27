@@ -33,6 +33,15 @@ import { join } from "path";
           url: "comment:3001",
         },
       },
+      {
+        name: "IMAGE_SERVICE",
+        transport: Transport.GRPC,
+        options: {
+          package: "image",
+          protoPath: join(__dirname, "../../../proto/image.proto"),
+          url: "image:9001",
+        },
+      },
     ]),
   ],
   controllers: [PostController],
