@@ -97,13 +97,17 @@ export class PostService {
     if (!user) {
       throw new GrpcNotFoundException("User not found");
     }
-    const imageObservable = this.imageService.SaveImage({ image: data.file });
-    // @ts-ignore
-    const image: Image = await lastValueFrom(imageObservable);
+    let fileName = "";
+    if (data.file) {
+      const imageObservable = this.imageService.SaveImage({ image: data.file });
+      // @ts-ignore
+      const image: Image = await lastValueFrom(imageObservable);
+      fileName = image.fileName;
+    }
     const post = this.postRepository.create({
       ...data,
       author: { ...user, id: data.author.id.low },
-      image: image.fileName,
+      image: fileName,
     });
     await this.postRepository.save(post);
     return { success: true };
@@ -126,8 +130,9 @@ export class PostService {
       });
       //@ts-ignore
       const success: SuccessResponse = await lastValueFrom(successObservable);
+      console.log(success);
     }
-    await this.postRepository.delete(post);
+    console.log(await this.postRepository.remove(post));
     return { success: true };
   }
 
@@ -149,6 +154,8 @@ export class PostService {
       });
       // @ts-ignore
       const image: Image = await lastValueFrom(imageObservable);
+      console.log(image);
+
       Object.assign(post, {
         title: data.title,
         description: data.description,

@@ -45,13 +45,12 @@ export class ImageService {
     const imageEntity = await this.imageRepository.findOneBy({
       fileName: data.fileName,
     });
-    if (!imageEntity) {
-      throw new GrpcNotFoundException("Image not found");
-    }
     const filePath = resolve(__dirname, "static");
-    if (!existsSync(join(filePath, imageEntity.fileName))) {
-      throw new GrpcNotFoundException("Image not found");
+
+    if (!imageEntity || !existsSync(join(filePath, imageEntity.fileName))) {
+      console.log("Image not found");
     }
+
     try {
       unlinkSync(join(filePath, imageEntity.fileName));
     } catch (e) {
@@ -59,21 +58,34 @@ export class ImageService {
     }
     const newFileName = uuid.v4() + ".jpg";
     writeFileSync(join(filePath, newFileName), data.image);
-    imageEntity.fileName = newFileName;
-    return await this.imageRepository.save(imageEntity);
+    if (imageEntity) {
+      imageEntity.fileName = newFileName;
+      return await this.imageRepository.save(imageEntity);
+    }
+    const newImageEntity = this.imageRepository.create({
+      fileName: newFileName,
+      filePath,
+    });
+    return await this.imageRepository.save(newImageEntity);
   }
 
   async deleteFile(fileName: string) {
-    const { filePath } = await this.imageRepository.findOneBy({
+    const imageEntity = await this.imageRepository.findOneBy({
       fileName,
     });
+    const { filePath } = imageEntity;
     if (!filePath || !fileName) {
       throw new GrpcNotFoundException("File not found");
     }
     if (!existsSync(join(filePath, fileName))) {
       throw new GrpcNotFoundException("File not found");
     }
-    unlinkSync(join(filePath, fileName));
-    return { success: true };
+    try {
+      unlinkSync(join(filePath, fileName));
+      await this.imageRepository.remove(imageEntity);
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

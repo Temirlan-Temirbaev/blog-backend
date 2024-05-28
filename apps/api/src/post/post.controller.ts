@@ -76,7 +76,7 @@ export class PostController {
   }
 
   @Put("/:id")
-  @UseInterceptors(GrpcToHttpInterceptor)
+  @UseInterceptors(GrpcToHttpInterceptor, FileInterceptor("file"))
   @UseGuards(JwtAuthGuard)
   updatePost(
     @Req() req: RequestWithUserId,
