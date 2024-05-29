@@ -6,6 +6,7 @@ import {
   UpdateUserDto,
   UserService,
 } from "@app/shared";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import {
   Body,
   Controller,
@@ -20,19 +21,34 @@ import {
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Cache } from "cache-manager";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
+import { lastValueFrom } from "rxjs";
 
 @Controller("user")
 export class UserController {
   private userService: UserService;
-  constructor(@Inject("USER_SERVICE") private userClient: ClientGrpc) {}
+  constructor(
+    @Inject("USER_SERVICE") private userClient: ClientGrpc,
+    @Inject(CACHE_MANAGER) private cacheService: Cache
+  ) {}
   onModuleInit() {
     this.userService = this.userClient.getService<UserService>("UserService");
   }
   @Get()
   @UseInterceptors(GrpcToHttpInterceptor)
-  getUsers() {
-    return this.userService.GetUsers({});
+  async getUsers() {
+    const cachedData = await this.cacheService.get("users");
+    if (cachedData) {
+      console.log("DATA GETTED BY CACHE");
+      console.log(cachedData);
+      return cachedData;
+    }
+    const usersObservable = this.userService.GetUsers({});
+    // @ts-ignore
+    const users = await lastValueFrom(usersObservable);
+    await this.cacheService.set("users", users, 1000);
+    return await users;
   }
 
   @Get("/id/:id")

@@ -1,4 +1,11 @@
 services:
+  redis:
+    container_name: cache
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
   image:
     build:
       context: ./
@@ -34,6 +41,7 @@ services:
       - ./package-lock.json:/usr/src/authService/package-lock.json
     depends_on:
       - postgres
+      - image
     command: npm run dev auth
   user:
     build:
@@ -51,6 +59,7 @@ services:
       - ./package.json:/usr/src/userService/package.json
       - ./package-lock.json:/usr/src/userService/package-lock.json
     depends_on:
+      - image
       - postgres
     command: npm run dev user
   post:
@@ -69,6 +78,7 @@ services:
       - ./package.json:/usr/src/postService/package.json
       - ./package-lock.json:/usr/src/postService/package-lock.json
     depends_on:
+      - image
       - postgres
     command: npm run dev post
   comment:
@@ -102,7 +112,7 @@ services:
       - post
       - comment
       - user
-      - image
+      - redis
     volumes:
       - ./apps/api:/usr/src/apiGateway/apps/api
       - ./nest-cli.json:/usr/src/apiGateway/nest-cli.json
@@ -112,6 +122,7 @@ services:
       - ./package-lock.json:/usr/src/apiGateway/package-lock.json
     command: npm run dev api
   postgres:
+
     image: postgres
     environment:
       POSTGRES_DB: "blog"
@@ -122,3 +133,6 @@ services:
       - '5436:5432'
     volumes:
       - .blogdb-data:/var/lib/postgresql/data
+volumes:
+  redis:
+    driver: local
