@@ -6,6 +6,7 @@ import {
   RequestWithUserId,
   UpdatePostDto,
 } from "@app/shared";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import {
   Body,
   Controller,
@@ -22,12 +23,17 @@ import {
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Cache } from "cache-manager";
 import { GrpcToHttpInterceptor } from "nestjs-grpc-exceptions";
+import { lastValueFrom } from "rxjs";
 
 @Controller("post")
 export class PostController {
   private postService: PostService;
-  constructor(@Inject("POST_SERVICE") private postClient: ClientGrpc) {}
+  constructor(
+    @Inject("POST_SERVICE") private postClient: ClientGrpc,
+    @Inject(CACHE_MANAGER) private cacheService: Cache
+  ) {}
 
   onModuleInit() {
     this.postService = this.postClient.getService<PostService>("PostService");
@@ -35,13 +41,25 @@ export class PostController {
 
   @Get("page/:page")
   @UseInterceptors(GrpcToHttpInterceptor)
-  getPosts(@Param("page") page: number) {
+  async getPosts(@Param("page") page: number) {
+    const cachedData = await this.cacheService.get(`post-page-${page}`);
+    if (cachedData) return cachedData;
+    const postsObservable = this.postService.GetPosts({ page: Number(page) });
+    // @ts-ignore
+    const posts = await lastValueFrom(postsObservable);
+    await this.cacheService.set(`post-page-${page}`, posts, 300);
     return this.postService.GetPosts({ page: Number(page) });
   }
 
   @Get("id/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
-  getPostById(@Param("id") id: number) {
+  async getPostById(@Param("id") id: number) {
+    const cachedData = await this.cacheService.get(`post-id-${id}`);
+    if (cachedData) return cachedData;
+    const postObservable = this.postService.GetPostById({ id: Number(id) });
+    // @ts-ignore
+    const post = await lastValueFrom(postObservable);
+    await this.cacheService.set(`post-id-${id}`, post, 2000);
     return this.postService.GetPostById({ id: Number(id) });
   }
 

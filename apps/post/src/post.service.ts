@@ -92,7 +92,6 @@ export class PostService {
     const userObservable = this.userService.GetUserById({
       id: data.author.id.low,
     });
-    // @ts-ignore
     const user: User = await lastValueFrom(userObservable);
     if (!user) {
       throw new GrpcNotFoundException("User not found");

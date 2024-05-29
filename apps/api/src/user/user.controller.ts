@@ -39,13 +39,8 @@ export class UserController {
   @UseInterceptors(GrpcToHttpInterceptor)
   async getUsers() {
     const cachedData = await this.cacheService.get("users");
-    if (cachedData) {
-      console.log("DATA GETTED BY CACHE");
-      console.log(cachedData);
-      return cachedData;
-    }
+    if (cachedData) return cachedData;
     const usersObservable = this.userService.GetUsers({});
-    // @ts-ignore
     const users = await lastValueFrom(usersObservable);
     await this.cacheService.set("users", users, 1000);
     return await users;
@@ -53,7 +48,14 @@ export class UserController {
 
   @Get("/id/:id")
   @UseInterceptors(GrpcToHttpInterceptor)
-  getUserById(@Param("id") id: string) {
+  async getUserById(@Param("id") id: string) {
+    const cachedData = await this.cacheService.get(`user-${id}`);
+    if (cachedData) return cachedData;
+    const userObservable = this.userService.GetUserById({
+      id: Number(id),
+    });
+    const user = await lastValueFrom(userObservable);
+    await this.cacheService.set(`user-${id}`, user, 300);
     return this.userService.GetUserById({ id: Number(id) });
   }
 

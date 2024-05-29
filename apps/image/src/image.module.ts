@@ -14,7 +14,7 @@ import { resolve } from "path";
     PostgresModule,
     TypeOrmModule.forFeature([Image]),
     ServeStaticModule.forRoot({
-      rootPath: resolve(__dirname, "static"),
+      rootPath: resolve(__dirname, "../../../../../../", "static"),
     }),
   ],
   controllers: [ImageController],

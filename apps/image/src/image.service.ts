@@ -20,7 +20,7 @@ export class ImageService {
 
   async saveImage(image: Uint8Array) {
     const fileName = uuid.v4() + ".jpg";
-    const filePath = resolve(__dirname, "static");
+    const filePath = resolve(__dirname, "../../../../../../", "static");
     if (!existsSync(filePath)) {
       mkdirSync(filePath);
     }

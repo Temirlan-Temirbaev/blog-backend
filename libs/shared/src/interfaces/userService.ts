@@ -1,9 +1,10 @@
+import { Observable } from "rxjs";
 import { User } from "../entities/user";
 import { SuccessResponse } from "./successResponse";
 
 export interface UserService {
-  GetUserById: (body: GetUserByIdRequest) => Promise<User>;
-  GetUsers: (body: {}) => Promise<User[]>;
+  GetUserById: (body: GetUserByIdRequest) => Observable<User>;
+  GetUsers: (body: {}) => Observable<User[]>;
   UpdateUser: (body: UpdateUserRequest) => Promise<User>;
   UpdatePassword: (body: UpdatePasswordRequest) => Promise<User>;
   SearchUsers: (body: SearchUsersRequest) => Promise<User[]>;
