@@ -1,11 +1,12 @@
 import { Image } from "../entities/image";
 import { SuccessResponse } from "./successResponse";
+import { Observable } from "rxjs";
 
 export interface ImageService {
-  SaveImage: (body: ImageBytes) => Promise<Image>;
-  GetImage: (body: GetImageRequest) => Promise<Uint8Array>;
-  UpdateImage: (body: UpdateImageRequest) => Promise<Image>;
-  DeleteImage: (body: DeleteImageRequest) => Promise<SuccessResponse>;
+  SaveImage: (body: ImageBytes) => Observable<Image>;
+  GetImage: (body: GetImageRequest) => Observable<Uint8Array>;
+  UpdateImage: (body: UpdateImageRequest) => Observable<Image>;
+  DeleteImage: (body: DeleteImageRequest) => Observable<SuccessResponse>;
 }
 
 export interface ImageBytes {

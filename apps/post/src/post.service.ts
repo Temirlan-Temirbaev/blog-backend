@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Brackets, Like, Repository } from "typeorm";
 import {
   GrpcInvalidArgumentException,
-  GrpcNotFoundException,
+  GrpcNotFoundException
 } from "nestjs-grpc-exceptions";
 import {
   CreateRequest,
@@ -17,7 +17,7 @@ import {
   CommentService,
   GetPostsByContentRequest,
   ImageService,
-  Image,
+  Image
 } from "@app/shared";
 import { ClientGrpc } from "@nestjs/microservices";
 import { lastValueFrom } from "rxjs";
@@ -27,12 +27,14 @@ export class PostService {
   private userService: UserService;
   private commentService: CommentService;
   private imageService: ImageService;
+
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @Inject("USER_SERVICE") private userClient: ClientGrpc,
     @Inject("IMAGE_SERVICE") private imageClient: ClientGrpc,
     @Inject("COMMENT_SERVICE") private commentClient: ClientGrpc
-  ) {}
+  ) {
+  }
 
   onModuleInit() {
     this.userService = this.userClient.getService<UserService>("UserService");
@@ -62,10 +64,7 @@ export class PostService {
     const commentsObservable = this.commentService.GetCommentsByPostId({
       postId: post.postId,
     });
-    const { comments }: { comments: Comment[] } = await lastValueFrom(
-      // @ts-ignore
-      commentsObservable
-    );
+    const comments = await lastValueFrom(commentsObservable.comments);
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
@@ -79,8 +78,8 @@ export class PostService {
     const posts = await this.postRepository.find({
       where: { author: { id } },
       order: {
-        createdAt: "DESC",
-      },
+        createdAt: "DESC"
+      }
     });
 
     return { posts };
@@ -90,7 +89,7 @@ export class PostService {
     data: CreateRequest & { author: { id: ProtoInt } }
   ): Promise<SuccessResponse> {
     const userObservable = this.userService.GetUserById({
-      id: data.author.id.low,
+      id: data.author.id.low
     });
     const user: User = await lastValueFrom(userObservable);
     if (!user) {
@@ -99,14 +98,13 @@ export class PostService {
     let fileName = "";
     if (data.file) {
       const imageObservable = this.imageService.SaveImage({ image: data.file });
-      // @ts-ignore
       const image: Image = await lastValueFrom(imageObservable);
       fileName = image.fileName;
     }
     const post = this.postRepository.create({
       ...data,
       author: { ...user, id: data.author.id.low },
-      image: fileName,
+      image: fileName
     });
     await this.postRepository.save(post);
     return { success: true };
@@ -118,16 +116,15 @@ export class PostService {
   }): Promise<SuccessResponse> {
     const post = await this.postRepository.findOneBy({
       postId: data.postId.low,
-      author: { id: data.authorId.low },
+      author: { id: data.authorId.low }
     });
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
     }
     if (post.image.length !== 0) {
       const successObservable = this.imageService.DeleteImage({
-        fileName: post.image,
+        fileName: post.image
       });
-      //@ts-ignore
       const success: SuccessResponse = await lastValueFrom(successObservable);
       console.log(success);
     }
@@ -140,7 +137,7 @@ export class PostService {
   ): Promise<SuccessResponse> {
     const post = await this.postRepository.findOneBy({
       postId: data.postId,
-      author: { id: data.author.id.low },
+      author: { id: data.author.id.low }
     });
     if (!post) {
       throw new GrpcNotFoundException("Post not found");
@@ -149,16 +146,15 @@ export class PostService {
     if (data.file) {
       const imageObservable = this.imageService.UpdateImage({
         image: data.file,
-        fileName: post.image,
+        fileName: post.image
       });
-      // @ts-ignore
       const image: Image = await lastValueFrom(imageObservable);
       console.log(image);
 
       Object.assign(post, {
         title: data.title,
         description: data.description,
-        image: image.fileName,
+        image: image.fileName
       });
     } else {
       Object.assign(post, { title: data.title, description: data.description });
@@ -176,9 +172,9 @@ export class PostService {
       .andWhere(
         new Brackets((qb) => {
           qb.where("post.title LIKE :like", {
-            like: `%${data.title}%`,
+            like: `%${data.title}%`
           }).orWhere("post.description LIKE :description", {
-            description: `%${data.description}%`,
+            description: `%${data.description}%`
           });
         })
       )

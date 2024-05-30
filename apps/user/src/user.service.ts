@@ -95,7 +95,6 @@ export class UserService {
       image: body.image,
     });
 
-    // @ts-ignore
     const image: Image = await lastValueFrom(imageObservable);
     console.log(image);
 

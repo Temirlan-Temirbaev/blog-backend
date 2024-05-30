@@ -1,8 +1,9 @@
 import { Comment } from "../entities/comment";
 import { SuccessResponse } from "./successResponse";
+import { Observable } from "rxjs";
 
 export interface CommentService {
-  GetCommentsByPostId: (data: GetCommentsByPostIdRequest) => Promise<Comment[]>;
+  GetCommentsByPostId: (data: GetCommentsByPostIdRequest) => { comments :  Observable<Comment[]> };
   CreateComment: (data: CreateCommentRequest) => Promise<Comment>;
   UpdateComment: (data: UpdateCommentRequest) => Promise<SuccessResponse>;
   DeleteComment: (data: DeleteCommentRequest) => Promise<SuccessResponse>;

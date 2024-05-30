@@ -1,12 +1,13 @@
 import { Post } from "../entities/post";
 import { SuccessResponse } from "./successResponse";
+import { Observable } from "rxjs";
 
 export interface PostService {
   Create: (body: CreateRequest) => Promise<Post>;
   Delete: (body: DeleteRequest) => Promise<SuccessResponse>;
   Update: (body: UpdateRequest) => Promise<SuccessResponse>;
-  GetPosts: (body: GetPostsRequest) => Promise<Post[]>;
-  GetPostById: (body: GetPostByIdRequest) => Promise<Post>;
+  GetPosts: (body: GetPostsRequest) => Observable<Post[]>;
+  GetPostById: (body: GetPostByIdRequest) => Observable<Post>;
   GetPostsByAuthorId: (body: GetPostByIdRequest) => Promise<Post[]>;
   GetPostsByContent: (body: GetPostsByContentRequest) => Promise<Post[]>;
 }

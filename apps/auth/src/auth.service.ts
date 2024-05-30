@@ -47,7 +47,6 @@ export class AuthService {
       );
     const hashedPassword = await bcrypt.hash(body.password, 5);
     const imageObservable = this.imageService.SaveImage({ image: body.image });
-    // @ts-ignore
     const image: Image = await lastValueFrom(imageObservable);
     if (!image) {
       throw new GrpcAbortedException("Could'nt upload your avatar");

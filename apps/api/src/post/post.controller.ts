@@ -45,7 +45,6 @@ export class PostController {
     const cachedData = await this.cacheService.get(`post-page-${page}`);
     if (cachedData) return cachedData;
     const postsObservable = this.postService.GetPosts({ page: Number(page) });
-    // @ts-ignore
     const posts = await lastValueFrom(postsObservable);
     await this.cacheService.set(`post-page-${page}`, posts, 300);
     return this.postService.GetPosts({ page: Number(page) });
@@ -57,7 +56,6 @@ export class PostController {
     const cachedData = await this.cacheService.get(`post-id-${id}`);
     if (cachedData) return cachedData;
     const postObservable = this.postService.GetPostById({ id: Number(id) });
-    // @ts-ignore
     const post = await lastValueFrom(postObservable);
     await this.cacheService.set(`post-id-${id}`, post, 2000);
     return this.postService.GetPostById({ id: Number(id) });
